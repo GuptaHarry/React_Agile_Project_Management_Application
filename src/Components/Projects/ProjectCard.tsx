@@ -7,7 +7,7 @@ import {
   Stack,
   Chip,
   Box,
-  CardActionArea
+  CardActionArea,
 } from "@mui/material";
 import FolderIcon from "@mui/icons-material/Folder";
 import type { Project } from "../../Types/project";
@@ -19,33 +19,29 @@ interface Props {
   project: Project;
 }
 
+// Calculate days difference
+const getDaysAgo = (dateString: string) => {
+  const createdDate = new Date(dateString);
+  const now = new Date();
+  const diffTime: number = now.getTime() - createdDate.getTime(); // difference in milliseconds
+  const diffDays = Math.abs(Math.floor(diffTime / (1000 * 60 * 60 * 24)));
 
-  // Calculate days difference
-  const getDaysAgo = (dateString:string ) => {
-    const createdDate = new Date(dateString);
-    const now = new Date();
-    const diffTime : number = now.getTime() - createdDate.getTime(); // difference in milliseconds
-    const diffDays = Math.abs(Math.floor(diffTime / (1000 * 60 * 60 * 24)));
-
-    if (diffDays === 0) return "Created today";
-    if (diffDays === 1) return "Created 1 day ago";
-    return `Created ${diffDays} days ago`;
-  };
+  if (diffDays === 0) return "Created today";
+  if (diffDays === 1) return "Created 1 day ago";
+  return `Created ${diffDays} days ago`;
+};
 
 export default function ProjectCard({ project }: Props) {
   const navigate = useNavigate();
 
   const handleOpen = () => {
-   navigate(`/projects/${project.id}`)
+    navigate(`/projects/${project.id}`);
   };
 
-  // console.log(project.teamMemberIds);
   const teamMembers = project.teamMemberIds
-    .map((id) =>{
-        
-    //  console.log(mockUsers[id]);
-     return mockUsers[id];
-    } )
+    .map((id) => {
+      return mockUsers[id];
+    })
     .filter(Boolean);
 
   return (
@@ -59,7 +55,7 @@ export default function ProjectCard({ project }: Props) {
         transition: "0.3s",
         "&:hover": {
           boxShadow: 8,
-          transform: "translateY(-4px)",
+          transform: "translateY(-0.4rem)",
         },
       }}
     >
@@ -96,18 +92,12 @@ export default function ProjectCard({ project }: Props) {
             {project.description || "No description available"}
           </Typography>
 
-          
           {/* Team Section */}
           <Box mt={3}>
-           
             <Typography variant="caption" color="text.secondary">
               Team Members
-
             </Typography>
- 
-           
-            
-                 
+
             <AvatarGroup max={3} sx={{ mt: 1 }}>
               {teamMembers.map((user) => (
                 <Avatar

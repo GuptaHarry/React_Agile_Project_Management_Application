@@ -7,7 +7,7 @@ import { mockStories } from "../Mock/stories";
 import {ProjectsProvider} from "../Context/ProjectsContext";
 import { UsersProvider } from "../Context/UsersContext";
 import { UsersStoriesProvider } from "../Context/StoriesContext";
-
+import {STORAGE_KEY} from '../Storage/storage';
 
 
 export default function AppProvider ({children}: {
@@ -41,6 +41,23 @@ export default function AppProvider ({children}: {
             stories
         })
     } , [projects,users,stories]);
+
+     useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key !== STORAGE_KEY) return;
+
+      const newState = loadState<AppState>();
+
+      if (!newState) return;
+
+      // Update only if changed
+      setProjects(newState.projects);
+      setUsers(newState.users);
+      setStories(newState.stories);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+     },[]);
 
     return (
         <ProjectsProvider value={{projects,setProjects}}>

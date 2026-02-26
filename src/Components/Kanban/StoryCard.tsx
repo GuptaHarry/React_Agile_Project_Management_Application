@@ -1,0 +1,139 @@
+import {
+  Card,
+  CardContent,
+  Typography,
+  Avatar,
+  Stack,
+  Chip,
+  IconButton,
+} from "@mui/material";
+import type { UserStory } from "../../Types/userstory";
+import type { User } from "../../Types/user";
+import EditNoteIcon from "@mui/icons-material/EditNote";
+
+interface Props {
+  story: UserStory;
+  user?: User;
+}
+
+const priorityTheme: Record<string, { bg: string; color: string }> = {
+  High: {
+    bg: "#ffe4e3",
+    color: "#d32f2f",
+  },
+  Medium: {
+    bg: "#fff4dc",
+    color: "#ed6c02",
+  },
+  Low: {
+    bg: "#e6fbf3",
+    color: "#1b8a5a",
+  },
+};
+
+export default function StoryCard({ story, user }: Props) {
+  return (
+    <>
+      <Card
+        sx={{
+          width: "100%",
+          minHeight: 130,
+          borderRadius: 2,
+          boxShadow: 2,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          transition: "0.2s",
+          borderLeft: `0.3rem solid ${priorityTheme[story.priority].color}`,
+          "&:hover": {
+            boxShadow: 6,
+            transform: "translateY(-0.2rem)",
+          },
+        }}
+      >
+        <CardContent sx={{ p: 1.5 }}>
+          {/* Header */}
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="flex-start"
+          >
+            <Typography
+              fontWeight="bold"
+              sx={{
+                fontSize: 14,
+                lineHeight: 1.3,
+                display: "-webkit-box",
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+                pr: 1,
+              }}
+            >
+              {story.title}
+            </Typography>
+
+            <IconButton size="small">
+              <EditNoteIcon
+                sx={{
+                  color: "#1e3c72",
+                  fontSize: 20,
+                }}
+              />
+            </IconButton>
+          </Stack>
+
+          {/* Description */}
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              mt: 0.5,
+              mb: 1,
+              fontSize: 12,
+            }}
+          >
+            {story.description}
+          </Typography>
+
+          {/* Footer */}
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Chip
+              label={story.priority}
+              size="small"
+              sx={{
+                background: priorityTheme[story.priority].bg,
+                color: priorityTheme[story.priority].color,
+                fontWeight: 600,
+                borderRadius: 1.5,
+                height: 22,
+                fontSize: 11,
+              }}
+            />
+
+            {user && (
+              <Avatar
+                sx={{
+                  bgcolor: user.avatarColor,
+                  width: 26,
+                  height: 26,
+                  fontSize: 12,
+                }}
+              >
+                {user.name[0]}
+              </Avatar>
+            )}
+          </Stack>
+        </CardContent>
+      </Card>
+    </>
+  );
+}

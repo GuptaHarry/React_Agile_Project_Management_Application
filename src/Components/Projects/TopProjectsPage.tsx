@@ -15,18 +15,17 @@ import useProjects from "../../Hooks/useProjects";
 
 export default function TopProjectsPage({ top }: { top: number }) {
   const navigate = useNavigate();
- 
-  const {projects} = useProjects();
+
+  const { projects } = useProjects();
 
   function getTopProjects(
     projects: Record<string, Project>,
-    top: number
+    top: number,
   ): Project[] {
     return Object.values(projects)
       .sort(
         (a, b) =>
-          new Date(b.createdAt).getTime() -
-          new Date(a.createdAt).getTime()
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       )
       .slice(0, top);
   }
@@ -42,8 +41,8 @@ export default function TopProjectsPage({ top }: { top: number }) {
             background: "white",
             borderRadius: 3,
             p: 4,
-            boxShadow: "0px 8px 30px rgba(30,60,114,0.08)",
-            border: "1px solid rgba(30,60,114,0.08)",
+            boxShadow: "0rem 0.1rem 0.2rem #1e3c7214",
+            border: "0.1rem solid #1e3c7214",
           }}
         >
           {/* Header */}
@@ -93,10 +92,7 @@ export default function TopProjectsPage({ top }: { top: number }) {
             }}
           >
             {latestProjects.map((project) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-              />
+              <ProjectCard key={project.id} project={project} />
             ))}
           </Box>
         </Box>

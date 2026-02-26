@@ -21,6 +21,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import Avatar from "@mui/material/Avatar";
 import Chip from "@mui/material/Chip";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
+import NoProjectFound from "./NoProjectFound";
 import ProjectCard from "../Projects/ProjectCard";
 import Navbar from "../Navbar";
 import SearchIcon from "@mui/icons-material/Search";
@@ -28,16 +29,20 @@ import InputAdornment from "@mui/material/InputAdornment";
 import useProjects from "../../Hooks/useProjects";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import TuneIcon from "@mui/icons-material/Tune";
-import { mockUsers } from "../../Mock/users";
 import type { Project } from "../../Types/project";
+import useUsers from "../../Hooks/useUsers";
 
 export default function ProjectsPage() {
   const { projects, setProjects } = useProjects();
-  const userList = Object.values(mockUsers);
+  const { users } = useUsers();
+  const userList = Object.values(users);
+
   const [addProjectModal, setAddProjectModal] = useState(false);
   const [projectName, setProjectName] = useState<string>("");
   const [projectDescription, setProjectDescription] = useState<string>("");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+
+  const [searchQuery, setSearchQuery] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const displayProjects = Object.values(projects);
@@ -70,6 +75,14 @@ export default function ProjectsPage() {
     setOpenSnackbar(true);
   }
 
+  const filteredProjects: Project[] = displayProjects.filter((project) => {
+    return project.name.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
+  function handleSearchQuery(value: string) {
+    setSearchQuery(value);
+  }
+
   return (
     <>
       <Navbar />
@@ -88,8 +101,8 @@ export default function ProjectsPage() {
               background: "white",
               borderRadius: 3,
               p: 4,
-              boxShadow: "0px 8px 30px rgba(30,60,114,0.08)",
-              border: "1px solid rgba(30,60,114,0.08)",
+              boxShadow: "0rem 0.1rem 0.2rem #1e3c7214",
+              border: "0.1rem solid #1e3c7214",
             }}
           >
             {/* Header */}
@@ -120,6 +133,8 @@ export default function ProjectsPage() {
                 <TextField
                   size="small"
                   placeholder="Search projects..."
+                  value={searchQuery}
+                  onChange={(e) => handleSearchQuery(e.target.value)}
                   sx={{
                     width: { xs: "100%", sm: 300, md: 380 },
                     background: "#f4f7ff",
@@ -147,7 +162,7 @@ export default function ProjectsPage() {
                     borderRadius: 2,
                     fontWeight: 600,
                     background: "linear-gradient(135deg, #1e3c72, #2a5298)",
-                    boxShadow: "0px 4px 12px rgba(30,60,114,0.3)",
+                    boxShadow: "0rem 0.1rem 0.2rem #1e3c724d",
                     "&:hover": {
                       background: "linear-gradient(135deg, #16325c, #1f3f7a)",
                     },
@@ -163,10 +178,10 @@ export default function ProjectsPage() {
                     borderRadius: 2,
                     fontWeight: 600,
                     color: "#1e3c72",
-                    borderColor: "rgba(30,60,114,0.4)",
+                    borderColor: "#1e3c7266",
                     "&:hover": {
                       borderColor: "#1e3c72",
-                      backgroundColor: "rgba(30,60,114,0.05)",
+                      backgroundColor: "#1e3c720d",
                     },
                   }}
                 >
@@ -190,9 +205,16 @@ export default function ProjectsPage() {
                 gap: 3,
               }}
             >
-              {displayProjects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))}
+              {filteredProjects.length > 0 &&
+                filteredProjects.map((project) => (
+                  <ProjectCard key={project.id} project={project} />
+                ))}
+
+              {filteredProjects.length === 0 && <NoProjectFound />}
+              {searchQuery.length === 0 &&
+                displayProjects.map((project) => (
+                  <ProjectCard key={project.id} project={project} />
+                ))}
             </Box>
           </Box>
         </Container>
@@ -311,6 +333,7 @@ export default function ProjectsPage() {
           </Button>
         </DialogActions>
       </Dialog>
+
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}

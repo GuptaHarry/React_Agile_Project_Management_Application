@@ -21,7 +21,6 @@ export default function Navbar() {
       sx={{
         background: "linear-gradient(135deg, #1e3c72, #2a5298)",
         borderRadius: 0,
-    
       }}
     >
       <Toolbar
@@ -47,7 +46,12 @@ export default function Navbar() {
         </Stack>
 
         {/* Middle Section — Navigation Buttons */}
-        <Stack direction="row" spacing={2} alignItems="center" justifyItems="flex-end">
+        <Stack
+          direction="row"
+          spacing={2}
+          alignItems="center"
+          justifyItems="flex-end"
+        >
           <Button
             variant="contained"
             startIcon={<FolderOpenIcon />}
@@ -84,24 +88,23 @@ export default function Navbar() {
           >
             Manage Users
           </Button>
-      
 
-        {/* Right Section — Admin Avatar */}
-        <Box>
-          <Avatar
-            sx={{
-              bgcolor: "#ff9800",
-              width: 40,
-              height: 40,
-              fontWeight: "bold",
-              cursor: "pointer",
-              boxShadow: 2,
-            }}
-          >
-            A
-          </Avatar>
-        </Box>
-          </Stack>
+          {/* Right Section — Admin Avatar */}
+          <Box>
+            <Avatar
+              sx={{
+                bgcolor: "#ff9800",
+                width: 40,
+                height: 40,
+                fontWeight: "bold",
+                cursor: "pointer",
+                boxShadow: 2,
+              }}
+            >
+              A
+            </Avatar>
+          </Box>
+        </Stack>
       </Toolbar>
     </AppBar>
   );
