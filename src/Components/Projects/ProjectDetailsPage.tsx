@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Typography,
   Container,
@@ -17,23 +17,30 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-// import { mockProjects } from '../../Mock/projects';
 import useProjects from "../../Hooks/useProjects";
 import Navbar from "../Navbar";
 import KanbanBoard from "../Kanban/KanbanBoard";
 import BorderColorTwoToneIcon from "@mui/icons-material/BorderColorTwoTone";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useState } from "react";
 import type { Project } from "../../Types/project";
 import useUsers from "../../Hooks/useUsers";
+import useStories from "../../Hooks/useStories";
+import EditStoryModal from "../Kanban/EditStoryModal";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import NoProjectFound from "./NoProjectFound";
-
+import AddStoryModal from "../Kanban/AddStoryModal";
 export default function ProjectDetailsPage() {
-  const { projectId } = useParams();
+  const { projectId, storyId } = useParams();
+
   const { projects, setProjects } = useProjects();
   const { users } = useUsers();
 
+  const openEditStoryModal = Boolean(storyId);
+  const { stories } = useStories();
+  const navigate = useNavigate();
+  const selectedStory = storyId ? stories[storyId] : null;
   const allUsersList = Object.values(users);
   const project = projectId ? projects[projectId] : null;
 
@@ -52,6 +59,8 @@ export default function ProjectDetailsPage() {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
+  const [addStoryModal, setAddStoryModal] = useState(false);
+
   function handleEditProject(
     projectName: string,
     projectDescription: string,
@@ -69,8 +78,8 @@ export default function ProjectDetailsPage() {
       const editedProjectRecord: Record<string, Project> = {
         [editedProject.id]: editedProject,
       };
-      console.log(project)
-;      setProjects({ ...projects, ...editedProjectRecord });
+      console.log(project);
+      setProjects({ ...projects, ...editedProjectRecord });
       setEditProjectModal(false);
       setOpenSnackbar(true);
       setSelectedUsers([]);
@@ -118,23 +127,44 @@ export default function ProjectDetailsPage() {
                   {project.name}
                 </Typography>
 
-                <Button
-                  variant="contained"
-                  startIcon={<BorderColorTwoToneIcon />}
-                  onClick={() => setEditProjectModal(true)}
-                  sx={{
-                    borderRadius: 2,
-                    textTransform: "none",
-                    fontWeight: 600,
-                    backgroundColor: "#ffffff",
-                    color: "#1e3c72",
-                    "&:hover": {
-                      backgroundColor: "#f0f4ff",
-                    },
-                  }}
-                >
-                  Edit Project
-                </Button>
+                <Stack direction="row">
+                  <Button
+                    variant="contained"
+                    startIcon={<BorderColorTwoToneIcon />}
+                    onClick={() => setEditProjectModal(true)}
+                    sx={{
+                      borderRadius: 2,
+                      textTransform: "none",
+                      fontWeight: 600,
+                      backgroundColor: "#ffffff",
+                      color: "#1e3c72",
+                      "&:hover": {
+                        backgroundColor: "#f0f4ff",
+                      },
+                    }}
+                  >
+                    Edit Project
+                  </Button>
+
+                  <Button
+                    variant="contained"
+                    startIcon={<AddCircleOutlineIcon />}
+                    onClick={() => setAddStoryModal(true)}
+                    sx={{
+                      borderRadius: 2,
+                      ml: 3,
+                      fontWeight: 600,
+                      textTransform: "none",
+                      background: "linear-gradient(135deg, #1e3c72, #2a5298)",
+                      boxShadow: "0rem 0.1rem 0.2rem #1e3c724d",
+                      "&:hover": {
+                        background: "linear-gradient(135deg, #16325c, #1f3f7a)",
+                      },
+                    }}
+                  >
+                    User Story
+                  </Button>
+                </Stack>
               </Stack>
 
               <Typography color="text.secondary">
@@ -402,6 +432,21 @@ export default function ProjectDetailsPage() {
           Project Details updated successfully!
         </Alert>
       </Snackbar>
+
+      {selectedStory && (
+        <EditStoryModal
+          story={selectedStory}
+          openEditStoryModal={openEditStoryModal}
+          setOpenEditStoryModal={() => navigate(`/projects/${projectId}`)}
+        />
+      )}
+
+      {addStoryModal && (
+        <AddStoryModal
+          addStoryModal={addStoryModal}
+          setAddStoryModal={setAddStoryModal}
+        />
+      )}
     </>
   );
 }

@@ -13,12 +13,14 @@ import UserCard from "../Users/UserCard";
 import GroupIcon from "@mui/icons-material/Group";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import TuneIcon from "@mui/icons-material/Tune";
+import { useState } from "react";
+import AddUserModal from "./AddUserModal";
 
 export default function UsersPage() {
   const { users } = useUsers();
 
   const displayUsers = Object.values(users);
-
+  const [addUserModal, setAddUserModal] = useState(false);
   return (
     <>
       <Navbar />
@@ -59,6 +61,7 @@ export default function UsersPage() {
                 <Button
                   variant="contained"
                   startIcon={<AddCircleOutlineIcon />}
+                  onClick={() => setAddUserModal(true)}
                   sx={{
                     borderRadius: 2,
                     fontWeight: 600,
@@ -113,6 +116,12 @@ export default function UsersPage() {
           </Box>
         </Container>
       </Box>
+      {addUserModal && (
+        <AddUserModal
+          addUserModal={addUserModal}
+          setAddUserModal={setAddUserModal}
+        />
+      )}
     </>
   );
 }

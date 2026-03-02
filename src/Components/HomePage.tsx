@@ -2,7 +2,7 @@
 import Navbar from "./Navbar";
 import MainContent from "./MainContent";
 import { Box, Toolbar } from "@mui/material";
-
+import Footer from "./Footer";
 export default function HomePage() {
   return (
     <Box
@@ -17,6 +17,7 @@ export default function HomePage() {
       <Toolbar />
 
       <MainContent />
+      <Footer/>
     </Box>
   );
 }

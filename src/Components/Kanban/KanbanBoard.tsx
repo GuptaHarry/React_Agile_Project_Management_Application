@@ -2,15 +2,12 @@ import { Box, Stack } from "@mui/material";
 import KanbanColumn from "./KanbanColumn";
 import { StoryStatus } from "../../Types/enums";
 import useStories from "../../Hooks/useStories";
-import useUsers from "../../Hooks/useUsers";
-
 interface Props {
   projectId: string;
 }
 
 export default function KanbanBoard({ projectId }: Props) {
   const { stories } = useStories();
-  const { users } = useUsers();
 
   const projectStories = Object.values(stories).filter(
     (s) => s.projectId === projectId,
@@ -43,9 +40,7 @@ export default function KanbanBoard({ projectId }: Props) {
           <KanbanColumn
             key={status}
             status={status}
-            stories={projectStories.filter((s) => s.status === status)}
-            users={users}
-          />
+            stories={projectStories.filter((s) => s.status === status)}          />
         ))}
       </Stack>
     </Box>

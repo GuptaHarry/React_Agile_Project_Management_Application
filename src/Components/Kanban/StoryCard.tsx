@@ -8,12 +8,11 @@ import {
   IconButton,
 } from "@mui/material";
 import type { UserStory } from "../../Types/userstory";
-import type { User } from "../../Types/user";
 import EditNoteIcon from "@mui/icons-material/EditNote";
-
+import { useNavigate } from "react-router-dom";
+import useUsers from "../../Hooks/useUsers";
 interface Props {
   story: UserStory;
-  user?: User;
 }
 
 const priorityTheme: Record<string, { bg: string; color: string }> = {
@@ -31,7 +30,13 @@ const priorityTheme: Record<string, { bg: string; color: string }> = {
   },
 };
 
-export default function StoryCard({ story, user }: Props) {
+export default function StoryCard({ story }: Props) {
+  const navigate = useNavigate();
+  const { users } = useUsers();
+  const user = users[story.assignedUserId !== null ? story.assignedUserId : ""];
+  function handleClick() {
+    navigate(`/projects/${story.projectId}/stories/${story.id}`);
+  }
   return (
     <>
       <Card
@@ -73,7 +78,7 @@ export default function StoryCard({ story, user }: Props) {
               {story.title}
             </Typography>
 
-            <IconButton size="small">
+            <IconButton size="small" onClick={() => handleClick()}>
               <EditNoteIcon
                 sx={{
                   color: "#1e3c72",

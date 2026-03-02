@@ -1,12 +1,12 @@
-import { Box, Typography, Stack } from "@mui/material";
+import { Box, Typography, Stack, Tooltip, IconButton } from "@mui/material";
 import type { UserStory } from "../../Types/userstory";
-import type { User } from "../../Types/user";
 import StoryCard from "./StoryCard";
 import SwapVertTwoToneIcon from "@mui/icons-material/SwapVertTwoTone";
+import { useMemo, useState } from "react";
+
 interface Props {
   status: string;
   stories: UserStory[];
-  users: Record<string, User>;
 }
 const columnColors: Record<string, string> = {
   Backlog: "#f7e3e3",
@@ -15,7 +15,23 @@ const columnColors: Record<string, string> = {
   Done: "#e6effe",
 };
 
-export default function KanbanColumn({ status, stories, users }: Props) {
+const priorityWeight: Record<string, number> = {
+  High: 3,
+  Medium: 2,
+  Low: 1,
+};
+
+export default function KanbanColumn({ status, stories }: Props) {
+  const [sortDesc, setSortDesc] = useState(true);
+
+  const sortedStories = useMemo(() => {
+    return [...stories].sort((a, b) => {
+      const diff = priorityWeight[b.priority] - priorityWeight[a.priority];
+
+      return sortDesc ? diff : -diff;
+    });
+  }, [stories, sortDesc]);
+
   return (
     <Box
       sx={{
@@ -39,22 +55,27 @@ export default function KanbanColumn({ status, stories, users }: Props) {
           {status} ({stories.length})
         </Typography>
 
-        <SwapVertTwoToneIcon
-          sx={{
-            color: "darkblue",
-          }}
-        />
+        <Tooltip title="Sort by Priority">
+          <IconButton
+            size="small"
+            onClick={() => setSortDesc((prev) => !prev)}
+            sx={{
+              transition: "0.25s",
+              transform: sortDesc ? "rotate(0deg)" : "rotate(180deg)",
+              color: "#1e3c72",
+              "&:hover": {
+                background: "#1e3c7210",
+              },
+            }}
+          >
+            <SwapVertTwoToneIcon />
+          </IconButton>
+        </Tooltip>
       </Stack>
 
       <Stack spacing={2}>
-        {stories.map((story) => (
-          <StoryCard
-            key={story.id}
-            story={story}
-            user={
-              users[story.assignedUserId !== null ? story.assignedUserId : ""]
-            }
-          />
+        {sortedStories.map((story) => (
+          <StoryCard key={story.id} story={story} />
         ))}
       </Stack>
     </Box>
