@@ -41,7 +41,7 @@ export default function AddUserModal({ addUserModal, setAddUserModal }: Props) {
   const [color, setColor] = useState(avatarColors[0]);
 
   function generateUserId() {
-   return `u_${Date.now()}_${Math.floor(Math.random() * 1000)}`
+    return `u_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
   }
 
   function handleCreate() {

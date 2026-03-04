@@ -9,6 +9,7 @@ import {
   Button,
   Snackbar,
   Alert,
+  MenuItem,
 } from "@mui/material";
 import { useState } from "react";
 import {
@@ -31,13 +32,16 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import TuneIcon from "@mui/icons-material/Tune";
 import type { Project } from "../../Types/project";
 import useUsers from "../../Hooks/useUsers";
-
+import useStories from "../../Hooks/useStories";
 export default function ProjectsPage() {
   const { projects, setProjects } = useProjects();
   const { users } = useUsers();
+  const { stories } = useStories();
   const userList = Object.values(users);
 
   const [addProjectModal, setAddProjectModal] = useState(false);
+  const [openFilter, setOpenFilter] = useState(false);
+
   const [projectName, setProjectName] = useState<string>("");
   const [projectDescription, setProjectDescription] = useState<string>("");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
@@ -45,7 +49,22 @@ export default function ProjectsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
-  const displayProjects = Object.values(projects);
+  const [memberFilter, setMemberFilter] = useState("");
+  const [teamSizeFilter, setTeamSizeFilter] = useState("");
+  const [recentFilter, setRecentFilter] = useState(false);
+  const [myProjectsOnly, setMyProjectsOnly] = useState(false);
+  const [noStoriesFilter, setNoStoriesFilter] = useState(false);
+  const [mostStoriesFilter, setMostStoriesFilter] = useState(false);
+  const [sortFilter, setSortFilter] = useState("Newest");
+
+  function getTopProjects(projects: Record<string, Project>): Project[] {
+    return Object.values(projects).sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  }
+
+  let displayProjects = getTopProjects(projects);
 
   function handleCreateProject(
     projectName: string,
@@ -66,7 +85,6 @@ export default function ProjectsPage() {
       [`p${newProjectId}`]: newProjectObject,
     };
 
-    console.log(newProjectObject);
     setProjects({ ...projects, ...newRecord });
     setAddProjectModal(false);
     setProjectDescription("");
@@ -75,12 +93,98 @@ export default function ProjectsPage() {
     setOpenSnackbar(true);
   }
 
-  const filteredProjects: Project[] = displayProjects.filter((project) => {
-    return project.name.toLowerCase().includes(searchQuery.toLowerCase());
+  if (searchQuery) {
+    displayProjects = displayProjects.filter((project) => {
+      return project.name.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+  }
+
+  // team member
+  if (memberFilter) {
+    displayProjects = displayProjects.filter((project) =>
+      project.teamMemberIds.includes(memberFilter),
+    );
+  }
+
+  // my projects
+  if (myProjectsOnly) {
+    const currentUser = userList[0]?.id;
+
+    displayProjects = displayProjects.filter((p) =>
+      p.teamMemberIds.includes(currentUser),
+    );
+  }
+
+  // recent
+  if (recentFilter) {
+    const last7 = new Date();
+    last7.setDate(last7.getDate() - 7);
+
+    displayProjects = displayProjects.filter((p) =>
+      p.updatedAt ? new Date(p.updatedAt) >= last7 : false,
+    );
+  }
+
+  // teamsize
+  if (teamSizeFilter === "small") {
+    displayProjects = displayProjects.filter(
+      (p) => p.teamMemberIds.length <= 2,
+    );
+  }
+
+  if (teamSizeFilter === "medium") {
+    displayProjects = displayProjects.filter(
+      (p) => p.teamMemberIds.length >= 3 && p.teamMemberIds.length <= 5,
+    );
+  }
+
+  if (teamSizeFilter === "large") {
+    displayProjects = displayProjects.filter((p) => p.teamMemberIds.length > 5);
+  }
+
+  /// no stories
+  if (noStoriesFilter) {
+    displayProjects = displayProjects.filter(
+      (project) =>
+        !Object.values(stories).some((story) => story.projectId === project.id),
+    );
+  }
+
+  // most stories
+  if (mostStoriesFilter) {
+    displayProjects.sort((a, b) => {
+      const aCount = Object.values(stories).filter(
+        (s) => s.projectId === a.id,
+      ).length;
+
+      const bCount = Object.values(stories).filter(
+        (s) => s.projectId === b.id,
+      ).length;
+
+      return bCount - aCount;
+    });
+  }
+  // sort
+  displayProjects.sort((a, b) => {
+    if (sortFilter === "Newest") {
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    }
+
+    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
   });
 
   function handleSearchQuery(value: string) {
     setSearchQuery(value);
+  }
+
+  function clearFilters() {
+    setMemberFilter("");
+    setTeamSizeFilter("");
+    setRecentFilter(false);
+    setMyProjectsOnly(false);
+    setNoStoriesFilter(false);
+    setMostStoriesFilter(false);
+    setSortFilter("Newest");
   }
 
   return (
@@ -174,6 +278,7 @@ export default function ProjectsPage() {
                 <Button
                   variant="outlined"
                   startIcon={<TuneIcon />}
+                  onClick={() => setOpenFilter(true)}
                   sx={{
                     borderRadius: 2,
                     fontWeight: 600,
@@ -190,6 +295,61 @@ export default function ProjectsPage() {
               </Stack>
             </Stack>
 
+            {/* FILTER CHIPS */}
+
+            {(memberFilter ||
+              teamSizeFilter ||
+              recentFilter ||
+              myProjectsOnly ||
+              noStoriesFilter ||
+              mostStoriesFilter) && (
+              <Stack direction="row" spacing={1} mb={2} flexWrap="wrap">
+                {memberFilter && (
+                  <Chip
+                    label={`Member: ${users[memberFilter]?.name}`}
+                    onDelete={() => setMemberFilter("")}
+                  />
+                )}
+
+                {teamSizeFilter && (
+                  <Chip
+                    label={`Team Size: ${teamSizeFilter}`}
+                    onDelete={() => setTeamSizeFilter("")}
+                  />
+                )}
+
+                {recentFilter && (
+                  <Chip
+                    label="Updated Recently"
+                    onDelete={() => setRecentFilter(false)}
+                  />
+                )}
+
+                {myProjectsOnly && (
+                  <Chip
+                    label="My Projects"
+                    onDelete={() => setMyProjectsOnly(false)}
+                  />
+                )}
+
+                {noStoriesFilter && (
+                  <Chip
+                    label="No Stories"
+                    onDelete={() => setNoStoriesFilter(false)}
+                  />
+                )}
+
+                {mostStoriesFilter && (
+                  <Chip
+                    label="Most Stories"
+                    onDelete={() => setMostStoriesFilter(false)}
+                  />
+                )}
+
+                <Chip label="Clear All" color="error" onClick={clearFilters} />
+              </Stack>
+            )}
+
             <Divider sx={{ mb: 3 }} />
 
             {/* Projects Grid */}
@@ -205,16 +365,13 @@ export default function ProjectsPage() {
                 gap: 3,
               }}
             >
-              {filteredProjects.length > 0 &&
-                filteredProjects.map((project) => (
-                  <ProjectCard key={project.id} project={project} />
-                ))}
-
-              {filteredProjects.length === 0 && <NoProjectFound />}
-              {searchQuery.length === 0 &&
+              {displayProjects.length > 0 ? (
                 displayProjects.map((project) => (
                   <ProjectCard key={project.id} project={project} />
-                ))}
+                ))
+              ) : (
+                <NoProjectFound />
+              )}
             </Box>
           </Box>
         </Container>
@@ -334,6 +491,133 @@ export default function ProjectsPage() {
         </DialogActions>
       </Dialog>
 
+      <Dialog
+        open={openFilter}
+        onClose={() => setOpenFilter(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle
+          sx={{
+            fontWeight: "bold",
+            color: "#1e3c72",
+          }}
+        >
+          Project Filters
+        </DialogTitle>
+
+        <DialogContent>
+          <Stack spacing={3} mt={1}>
+            {/* Member Filter */}
+            <Autocomplete
+              options={userList}
+              getOptionLabel={(option) => option.name}
+              value={userList.find((u) => u.id === memberFilter) || null}
+              onChange={(_, newValue) =>
+                setMemberFilter(newValue ? newValue.id : "")
+              }
+              renderOption={(props, option) => (
+                <li {...props}>
+                  <Stack direction="row" spacing={1.5} alignItems="center">
+                    <Avatar
+                      sx={{
+                        width: 26,
+                        height: 26,
+                        bgcolor: option.avatarColor,
+                        fontSize: 13,
+                      }}
+                    >
+                      {option.name[0]}
+                    </Avatar>
+                    {option.name}
+                  </Stack>
+                </li>
+              )}
+              renderInput={(params) => (
+                <TextField {...params} label="Team Member" size="small" />
+              )}
+            />
+
+            {/* Team Size */}
+            <TextField
+              select
+              label="Team Size"
+              size="small"
+              value={teamSizeFilter}
+              onChange={(e) => setTeamSizeFilter(e.target.value)}
+            >
+              <MenuItem value="">All</MenuItem>
+              <MenuItem value="small">1–2 Members</MenuItem>
+              <MenuItem value="medium">3–5 Members</MenuItem>
+              <MenuItem value="large">6+ Members</MenuItem>
+            </TextField>
+
+            {/* Toggle Filters */}
+            <Stack direction="row" spacing={2} flexWrap="wrap">
+              <Button
+                variant={recentFilter ? "contained" : "outlined"}
+                onClick={() => setRecentFilter(!recentFilter)}
+                sx={{ textTransform: "none" }}
+              >
+                Updated Recently
+              </Button>
+
+              <Button
+                variant={myProjectsOnly ? "contained" : "outlined"}
+                onClick={() => setMyProjectsOnly(!myProjectsOnly)}
+                sx={{ textTransform: "none" }}
+              >
+                My Projects
+              </Button>
+
+              <Button
+                variant={noStoriesFilter ? "contained" : "outlined"}
+                onClick={() => setNoStoriesFilter(!noStoriesFilter)}
+                sx={{ textTransform: "none" }}
+              >
+                No Stories
+              </Button>
+
+              <Button
+                variant={mostStoriesFilter ? "contained" : "outlined"}
+                onClick={() => setMostStoriesFilter(!mostStoriesFilter)}
+                sx={{ textTransform: "none" }}
+              >
+                Most Stories
+              </Button>
+            </Stack>
+
+            {/* Sort */}
+            <TextField
+              select
+              label="Sort"
+              size="small"
+              value={sortFilter}
+              onChange={(e) => setSortFilter(e.target.value)}
+            >
+              <MenuItem value="Newest">Newest First</MenuItem>
+              <MenuItem value="Oldest">Oldest First</MenuItem>
+            </TextField>
+          </Stack>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={clearFilters} sx={{ textTransform: "none" }}>
+            Clear Filters
+          </Button>
+
+          <Button
+            variant="contained"
+            onClick={() => setOpenFilter(false)}
+            sx={{
+              textTransform: "none",
+              background: "linear-gradient(135deg, #1e3c72, #2a5298)",
+            }}
+          >
+            Apply
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}

@@ -31,6 +31,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import NoProjectFound from "./NoProjectFound";
 import AddStoryModal from "../Kanban/AddStoryModal";
+import ProjectAnalytics from "./ProjectAnalytics";
 export default function ProjectDetailsPage() {
   const { projectId, storyId } = useParams();
 
@@ -447,6 +448,7 @@ export default function ProjectDetailsPage() {
           setAddStoryModal={setAddStoryModal}
         />
       )}
+      {projectId && <ProjectAnalytics projectId={projectId}/>}
     </>
   );
 }

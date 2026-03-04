@@ -1,7 +1,6 @@
 import { Box, Stack, Typography } from "@mui/material";
 import FolderOffIcon from "@mui/icons-material/FolderOff";
 
-
 export default function NoProjectFound() {
   return (
     <>
@@ -10,8 +9,9 @@ export default function NoProjectFound() {
           width: "100%",
           py: 8,
           display: "flex",
-          alignItems: "center",
           justifyContent: "center",
+          minHeight: "30vh",
+          minWidth: "30vh",
         }}
       >
         <Stack

@@ -40,7 +40,8 @@ export default function KanbanBoard({ projectId }: Props) {
           <KanbanColumn
             key={status}
             status={status}
-            stories={projectStories.filter((s) => s.status === status)}          />
+            stories={projectStories.filter((s) => s.status === status)}
+          />
         ))}
       </Stack>
     </Box>

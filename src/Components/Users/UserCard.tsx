@@ -14,9 +14,10 @@ import type { User } from "../../Types/user";
 
 interface Props {
   user: User;
+  onEdit: (user: User) => void;
 }
 
-export default function UserCard({ user }: Props) {
+export default function UserCard({ user, onEdit }: Props) {
   return (
     <Card
       sx={{
@@ -48,6 +49,7 @@ export default function UserCard({ user }: Props) {
 
           <Stack direction="row" spacing={1}>
             <IconButton
+              onClick={() => onEdit(user)}
               sx={{
                 color: "#1e3c72",
                 backgroundColor: "#1e3c720d",
