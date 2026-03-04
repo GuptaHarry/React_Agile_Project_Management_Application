@@ -194,7 +194,7 @@ export default function AddStoryModal({
 
             <TextField
               label="Story Points"
-              type="number"
+              type="text"
               size="small"
               value={storyPoints}
               onChange={(e) => setStoryPoints(Number(e.target.value))}
