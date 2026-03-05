@@ -84,20 +84,43 @@ export default function ProjectAnalytics({ projectId }: Props) {
       </Typography>
 
       {/* STORY STATS */}
-      <Stack direction="row" spacing={3} mb={3}>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "repeat(2,1fr)",
+            md: "repeat(3,1fr)",
+            lg: "repeat(5,1fr)",
+          },
+          gap: 3,
+          mb: 3,
+        }}
+      >
         <StatCard title="Total Stories" value={totalStories} />
         <StatCard title="Completed" value={doneStories} />
         <StatCard title="In Progress" value={inProgressStories} />
         <StatCard title="Backlog" value={backlogStories} />
         <StatCard title="Testing" value={testingStories} />
-      </Stack>
+      </Box>
 
       {/* PRIORITY */}
-      <Stack direction="row" spacing={3} mb={3}>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "repeat(2,1fr)",
+            md: "repeat(3,1fr)",
+          },
+          gap: 3,
+          mb: 3,
+        }}
+      >
         <StatCard title="High Priority" value={highPriority} />
         <StatCard title="Medium Priority" value={mediumPriority} />
         <StatCard title="Low Priority" value={lowPriority} />
-      </Stack>
+      </Box>
 
       {/* COMPLETION */}
       <Box mb={3}>

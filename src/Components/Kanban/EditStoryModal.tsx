@@ -115,6 +115,16 @@ export default function EditStoryModal({
       onClose={() => handleClose()}
       fullWidth
       maxWidth="sm"
+      sx={{
+        "& .MuiDialog-paper": {
+          width: {
+            xs: "95%",
+            sm: 500,
+            md: 540,
+            lg: 580,
+          },
+        },
+      }}
     >
       <DialogTitle
         sx={{
@@ -153,7 +163,7 @@ export default function EditStoryModal({
               onChange={(e) => setStoryDescription(e.target.value)}
             />
 
-            <Stack direction="row" spacing={2}>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
               <TextField
                 select
                 label="Priority"
@@ -276,7 +286,7 @@ export default function EditStoryModal({
               Delete Story
             </Button>
 
-            <Box>
+            <Box sx={{ display: "flex", gap: 1 }}>
               <Button
                 onClick={() => setOpenEditStoryModal(false)}
                 sx={{ textTransform: "none", mr: 1 }}

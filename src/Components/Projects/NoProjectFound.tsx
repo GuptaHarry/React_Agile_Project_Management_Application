@@ -11,7 +11,6 @@ export default function NoProjectFound() {
           display: "flex",
           justifyContent: "center",
           minHeight: "30vh",
-          minWidth: "30vh",
         }}
       >
         <Stack
@@ -24,6 +23,7 @@ export default function NoProjectFound() {
             border: "0.1rem dashed rgba(30,60,114,0.2)",
             maxWidth: 420,
             textAlign: "center",
+            mx:"auto",
           }}
         >
           <FolderOffIcon

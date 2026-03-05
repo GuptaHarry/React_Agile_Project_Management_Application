@@ -35,12 +35,23 @@ export default function KanbanColumn({ status, stories }: Props) {
   return (
     <Box
       sx={{
-        minWidth: 300,
-        width: 300,
-        maxWidth: 300,
+        minWidth: {
+          xs: 260,
+          sm: 280,
+          md: 300,
+        },
+        width: {
+          xs: 260,
+          sm: 280,
+          md: 300,
+        },
+        maxWidth: 320,
         background: columnColors[status],
         borderRadius: 3,
-        p: 2,
+        p: {
+          xs: 1.5,
+          sm: 2,
+        },
         border: "0.1rem solid rgba(30,60,114,0.08)",
       }}
     >

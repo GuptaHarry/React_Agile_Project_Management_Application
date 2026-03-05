@@ -211,8 +211,8 @@ export default function ProjectsPage() {
           >
             {/* Header */}
             <Stack
-              direction="row"
-              alignItems="center"
+              direction={{xs:"column" , md:"row"}}
+              alignItems={{xs:"flex-start" , md:"center"}}
               justifyContent="space-between"
               mb={3}
               spacing={2}
@@ -240,7 +240,7 @@ export default function ProjectsPage() {
                   value={searchQuery}
                   onChange={(e) => handleSearchQuery(e.target.value)}
                   sx={{
-                    width: { xs: "100%", sm: 300, md: 380 },
+                    width: { xs: "100%", sm: 300, md: 380 , lg:420 },
                     background: "#f4f7ff",
                     borderRadius: 2,
                   }}
@@ -257,7 +257,7 @@ export default function ProjectsPage() {
               </Box>
 
               {/* Right — Actions */}
-              <Stack direction="row" spacing={2}>
+              <Stack direction="row" spacing={2} flexWrap="wrap">
                 <Button
                   variant="contained"
                   startIcon={<AddCircleOutlineIcon />}

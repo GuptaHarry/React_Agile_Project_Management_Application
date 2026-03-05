@@ -42,7 +42,11 @@ export default function StoryCard({ story }: Props) {
       <Card
         sx={{
           width: "100%",
-          minHeight: 130,
+          minHeight: {
+            xs: 120,
+            sm: 130,
+            md: 140,
+          },
           borderRadius: 2,
           boxShadow: 2,
           display: "flex",
@@ -66,7 +70,11 @@ export default function StoryCard({ story }: Props) {
             <Typography
               fontWeight="bold"
               sx={{
-                fontSize: 14,
+                fontSize: {
+                  xs: 13,
+                  sm: 14,
+                  md: 15,
+                },
                 lineHeight: 1.3,
                 display: "-webkit-box",
                 WebkitLineClamp: 3,
@@ -99,7 +107,11 @@ export default function StoryCard({ story }: Props) {
               overflow: "hidden",
               mt: 0.5,
               mb: 1,
-              fontSize: 12,
+              fontSize: {
+                xs: 11,
+                sm: 12,
+                md: 13,
+              },
             }}
           >
             {story.description}

@@ -26,6 +26,7 @@ export default function KanbanBoard({ projectId }: Props) {
         display: "flex",
         justifyContent: "center",
         width: "100%",
+        overflowX: "auto",
       }}
     >
       <Stack
@@ -34,6 +35,13 @@ export default function KanbanBoard({ projectId }: Props) {
         sx={{
           overflowX: "auto",
           pb: 2,
+          flexWrap: "nowrap",
+          alignItems: "flex-start",
+          px: {
+            xs: 1,
+            md: 2,
+            lg: 3,
+          },
         }}
       >
         {columns.map((status) => (

@@ -119,7 +119,12 @@ export default function ProjectDetailsPage() {
             }}
           >
             <Stack spacing={2}>
-              <Stack direction="row" justifyContent="space-between">
+              <Stack
+                direction={{ xs: "column", md: "row" }}
+                justifyContent="space-between"
+                alignItems={{ xs: "flex-start", md: "center" }}
+                spacing={{ xs: 2, md: 0 }}
+              >
                 <Typography
                   variant="h4"
                   fontWeight="bold"
@@ -128,7 +133,7 @@ export default function ProjectDetailsPage() {
                   {project.name}
                 </Typography>
 
-                <Stack direction="row">
+                <Stack direction="row" spacing={2} flexWrap="wrap">
                   <Button
                     variant="contained"
                     startIcon={<BorderColorTwoToneIcon />}
@@ -182,7 +187,7 @@ export default function ProjectDetailsPage() {
                   }}
                 />
               </Stack>
-              <Stack direction="row" spacing={2} mt={1}>
+              <Stack direction="row" spacing={2} mt={1} flexWrap="wrap">
                 {/* Created */}
                 <Box
                   sx={{
@@ -253,6 +258,7 @@ export default function ProjectDetailsPage() {
           </Box>
 
           {projectId && <KanbanBoard projectId={projectId} />}
+          {projectId && <ProjectAnalytics projectId={projectId} />}
         </Container>
       </Box>
 
@@ -448,7 +454,6 @@ export default function ProjectDetailsPage() {
           setAddStoryModal={setAddStoryModal}
         />
       )}
-      {projectId && <ProjectAnalytics projectId={projectId}/>}
     </>
   );
 }

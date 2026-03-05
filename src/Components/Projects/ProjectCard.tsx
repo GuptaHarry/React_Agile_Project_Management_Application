@@ -11,9 +11,8 @@ import {
 } from "@mui/material";
 import FolderIcon from "@mui/icons-material/Folder";
 import type { Project } from "../../Types/project";
-// import type { User } from "../../Types/user";
-import { mockUsers } from "../../Mock/users";
 import { useNavigate } from "react-router-dom";
+import useUsers from "../../Hooks/useUsers";
 
 interface Props {
   project: Project;
@@ -33,14 +32,14 @@ const getDaysAgo = (dateString: string) => {
 
 export default function ProjectCard({ project }: Props) {
   const navigate = useNavigate();
-
+  const { users } = useUsers();
   const handleOpen = () => {
     navigate(`/projects/${project.id}`);
   };
 
   const teamMembers = project.teamMemberIds
     .map((id) => {
-      return mockUsers[id];
+      return users[id];
     })
     .filter(Boolean);
 
@@ -68,7 +67,16 @@ export default function ProjectCard({ project }: Props) {
           alignItems: "stretch",
         }}
       >
-        <CardContent sx={{ flexGrow: 1 }}>
+        <CardContent
+          sx={{
+            flexGrow: 1,
+            p: {
+              xs: 2,
+              sm: 2.5,
+              md: 3,
+            },
+          }}
+        >
           {/* Header */}
           <Stack direction="row" spacing={1} alignItems="center" mb={1}>
             <FolderIcon color="primary" />
