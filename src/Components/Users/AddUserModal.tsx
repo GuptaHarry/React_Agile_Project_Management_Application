@@ -86,7 +86,13 @@ export default function AddUserModal({ addUserModal, setAddUserModal }: Props) {
       </DialogTitle>
 
       <DialogContent>
-        <Stack spacing={3} mt={1}>
+        <Stack spacing={3} mt={1}
+        sx={{
+          px:{
+            xs:0,
+            sm:1
+          }
+        }}>
           <TextField
             label="Full Name"
             fullWidth
@@ -115,7 +121,7 @@ export default function AddUserModal({ addUserModal, setAddUserModal }: Props) {
               Avatar Color
             </Typography>
 
-            <Stack direction="row" spacing={2}>
+            <Stack direction="row" spacing={2} flexWrap="wrap">
               {avatarColors.map((c) => (
                 <Avatar
                   key={c}
@@ -127,6 +133,14 @@ export default function AddUserModal({ addUserModal, setAddUserModal }: Props) {
                       color === c
                         ? "0.3rem solid #1e3c72"
                         : "0.2rem solid transparent",
+                        width:{
+                          xs:32,
+                          sm:36
+                        },
+                        height:{
+                          xs:32,
+                          sm:36
+                        }
                   }}
                 />
               ))}

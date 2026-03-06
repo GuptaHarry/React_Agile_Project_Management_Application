@@ -244,6 +244,7 @@ export default function UsersPage() {
       </Dialog>
       {selectedUser && (
         <EditUserModal
+        key={selectedUser.id}
           user={selectedUser}
           open={editUserModal}
           setOpen={setEditUserModal}

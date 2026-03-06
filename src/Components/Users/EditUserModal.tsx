@@ -22,16 +22,24 @@ interface Props {
 export default function EditUserModal({ user, open, setOpen }: Props) {
   const { users, setUsers } = useUsers();
 
-  const [name, setName] = useState(user?.name || "");
-  const [role, setRole] = useState(user?.role || "");
+  const [name, setName] = useState(user?.name ?? "");
+  const [role, setRole] = useState<UserRole>(
+    user?.role ?? UserRole.Developer
+  );
+
+  function handleClose() {
+    setName(user?.name ?? "");
+    setRole(user?.role ?? UserRole.Developer);
+    setOpen(false);
+  }
 
   function handleSave() {
     if (!user) return;
 
     const updatedUser: User = {
       ...user,
-      name: name || user.name,
-      role: (role || user.role) as UserRole,
+      name,
+      role,
     };
 
     setUsers({
@@ -39,11 +47,11 @@ export default function EditUserModal({ user, open, setOpen }: Props) {
       [user.id]: updatedUser,
     });
 
-    setOpen(false);
+    handleClose();
   }
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <DialogTitle
         sx={{
           fontWeight: "bold",
@@ -58,6 +66,7 @@ export default function EditUserModal({ user, open, setOpen }: Props) {
           <TextField
             label="User Name"
             size="small"
+            fullWidth
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
@@ -66,8 +75,9 @@ export default function EditUserModal({ user, open, setOpen }: Props) {
             select
             label="Role"
             size="small"
+            fullWidth
             value={role}
-            onChange={(e) => setRole(e.target.value)}
+            onChange={(e) => setRole(e.target.value as UserRole)}
           >
             {Object.values(UserRole).map((roleOption) => (
               <MenuItem key={roleOption} value={roleOption}>
@@ -79,13 +89,14 @@ export default function EditUserModal({ user, open, setOpen }: Props) {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={() => setOpen(false)} sx={{ textTransform: "none" }}>
+        <Button onClick={handleClose} sx={{ textTransform: "none" }}>
           Cancel
         </Button>
 
         <Button
           variant="contained"
           onClick={handleSave}
+          disabled={!name.trim()}
           sx={{
             textTransform: "none",
             background: "linear-gradient(135deg,#1e3c72,#2a5298)",
